@@ -1,1 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoodExpress India</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing:border-box; margin:0; padding:0; font-family: 'Roboto', sans-serif; }
+body { background:#f4f4f4; color:#333; line-height:1.6; }
+header { background:#ff5722; color:#fff; padding:15px 20px; display:flex; justify-content:space-between; flex-wrap:wrap; align-items:center; font-family:'Poppins',sans-serif;}
+header h1 { font-size:1.8em; }
+nav { display:flex; flex-wrap:wrap; gap:5px; align-items:center; }
+nav button { background:#fff; color:#ff5722; border:none; padding:8px 12px; border-radius:5px; cursor:pointer; font-weight:600; }
+nav button:hover { background:#ffc1a3; }
+.cart-badge { background:#fff; color:#ff5722; border-radius:50%; padding:2px 8px; font-weight:bold; margin-left:5px; }
+section { padding:20px; max-width:1200px; margin:auto; background:#fff; border-radius:10px; margin-top:20px; box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+.hidden { display:none; }
+h2 { margin-bottom:15px; color:#ff5722; }
+.menu-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap:15px; }
+.menu-item { background:#fff; border-radius:10px; padding:15px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.15); transition: transform 0.2s, box-shadow 0.2s;}
+.menu-item:hover { transform: scale(1.03); box-shadow:0 4px 15px rgba(0,0,0,0.2);}
+.menu-item img { width:100%; border-radius:10px; height:150px; object-fit:cover; }
+.menu-item button { margin-top:10px; padding:8px 12px; background:#ff5722; color:#fff; border:none; border-radius:5px; cursor:pointer; font-weight:600;}
+.menu-item button:hover { background:#e64a19; }
+
+#cartItems { list-style:none; padding:0; margin:0 0 15px 0; }
+#cartItems li { background:#fff; margin-bottom:10px; padding:10px; border-radius:5px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 1px 5px rgba(0,0,0,0.1);}
+#cartItems li button { background:#ff5722; color:#fff; border:none; border-radius:5px; padding:5px 10px; cursor:pointer;}
+#cartItems li button:hover { background:#e64a19; }
+
+form { background:#fff; padding:15px; border-radius:10px; max-width:500px; margin:auto; box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+form label { display:block; margin-top:10px; font-weight:600; }
+form input, form select { width:100%; padding:8px; margin-top:5px; border-radius:5px; border:1px solid #ccc; }
+form button { margin-top:15px; padding:10px 15px; background:#ff5722; color:#fff; border:none; border-radius:5px; cursor:pointer; font-weight:600;}
+form button:hover { background:#e64a19; }
+
+table { width:100%; border-collapse: collapse; margin-top:10px; }
+table, th, td { border:1px solid #ccc; }
+th, td { padding:8px; text-align:left; }
+.status { padding:5px 10px; border-radius:5px; color:#fff; font-weight:600; }
+.status.Preparing { background:#ff9800; }
+.status["Out for delivery"] { background:#4caf50; }
+.status.Delivered { background:#2196f3; }
+
+button.small { padding:4px 8px; font-size:0.9em; }
+.category-filters { margin-bottom:15px; display:flex; gap:10px; flex-wrap:wrap; }
+.category-filters button { background:#ff5722; color:#fff; border:none; border-radius:5px; padding:6px 12px; cursor:pointer; font-weight:600;}
+.category-filters button:hover { background:#e64a19; }
+
+@media(max-width:768px){ nav button { margin:5px 5px 0 0; } }
+</style>
+</head>
+<body>
+
+<header>
+<h1>🍴 FoodExpress India</h1>
+<nav>
+<button onclick="showSection('home')">Home</button>
+<button onclick="showSection('menu')">Menu</button>
+<button onclick="showSection('cart')">Cart <span id="cartCount" class="cart-badge">0</span></button>
+<button onclick="showSection('login')">Login</button>
+<button onclick="showSection('checkout')">Checkout</button>
+<button onclick="showSection('tracking')">Order Tracking</button>
+<button onclick="showSection('profile')">Profile</button>
+<button onclick="adminLogin()">Admin Dashboard</button>
+</nav>
+</header>
+
+<section id="home">
+<h2>Welcome to FoodExpress India 🍕</h2>
+<p>Order your favorite meals from our international menu. Fast delivery guaranteed! Prices in ₹.</p>
+<img src="https://source.unsplash.com/800x300/?restaurant,food" style="width:100%; border-radius:10px; margin-top:15px;">
+</section>
+
+<section id="menu" class="hidden">
+<h2>Menu</h2>
+<div class="category-filters">
+<button onclick="filterCategory('All')">All</button>
+<button onclick="filterCategory('Veg')">Veg</button>
+<button onclick="filterCategory('Non-Veg')">Non-Veg</button>
+<button onclick="filterCategory('Beverages')">Beverages</button>
+<button onclick="filterCategory('Desserts')">Desserts</button>
+</div>
+<div class="menu-grid" id="menuGrid"></div>
+</section>
+
+<section id="cart" class="hidden">
+<h2>Your Cart 🛒</h2>
+<ul id="cartItems"></ul>
+<p><strong>Total: ₹<span id="cartTotal">0.00</span></strong></p>
+<button onclick="showSection('checkout')">Proceed to Checkout</button>
+</section>
+
+<section id="login" class="hidden">
+<h2>Login 🔑</h2>
+<form id="loginForm">
+<label>Email</label>
+<input type="email" required>
+<label>Password</label>
+<input type="password" required>
+<button type="submit">Login</button>
+</form>
+</section>
+
+<section id="checkout" class="hidden">
+<h2>Checkout 🧾</h2>
+<form id="checkoutForm">
+<label>Full Name</label><input type="text" required>
+<label>Delivery Address</label><input type="text" required>
+<label>Delivery Slot</label>
+<select required>
+<option value="">Select Slot</option>
+<option>10:00 AM - 12:00 PM</option>
+<option>12:00 PM - 2:00 PM</option>
+<option>6:00 PM - 8:00 PM</option>
+<option>8:00 PM - 10:00 PM</option>
+</select>
+<label>Payment Method</label>
+<select required>
+<option value="">Select</option>
+<option value="card">Credit/Debit Card</option>
+<option value="cash">Cash on Delivery</option>
+<option value="upi">UPI</option>
+</select>
+<button type="submit">Place Order</button>
+</form>
+</section>
+
+<section id="tracking" class="hidden">
+<h2>Order Tracking 🚚</h2>
+<table id="trackingTable">
+<tr><th>Order ID</th><th>Item</th><th>Status</th></tr>
+</table>
+</section>
+
+<section id="profile" class="hidden">
+<h2>User Profile 👤</h2>
+<p><strong>Name:</strong> John Doe</p>
+<p><strong>Email:</strong> john@example.com</p>
+<h3>Order History</h3>
+<ul id="orderHistory"></ul>
+</section>
+
+<section id="admin" class="hidden">
+<h2>Admin Dashboard 🔧</h2>
+<h3>Menu Management</h3>
+<form id="adminMenuForm">
+<label>Item Name</label><input type="text" required id="adminItemName">
+<label>Category</label>
+<select required id="adminItemCategory">
+<option value="Veg">Veg</option>
+<option value="Non-Veg">Non-Veg</option>
+<option value="Beverages">Beverages</option>
+<option value="Desserts">Desserts</option>
+</select>
+<label>Price (₹)</label><input type="number" required id="adminItemPrice">
+<label>Image URL</label><input type="text" id="adminItemImg">
+<button type="submit">Add Item</button>
+</form>
+<table id="adminMenuTable">
+<tr><th>ID</th><th>Name</th><th>Category</th><th>Price (₹)</th><th>Action</th></tr>
+</table>
+<h3>Orders</h3>
+<table id="adminOrdersTable">
+<tr><th>Order ID</th><th>Item</th><th>Status</th><th>Action</th></tr>
+</table>
+<h3>Reports</h3>
+<p>Total Orders: <span id="reportTotalOrders">0</span></p>
+<p>Total Revenue: ₹<span id="reportRevenue">0.00</span></p>
+</section>
+
+<script>
+const ADMIN_PASSWORD='admin123';
+let menu=[
+{id:1,name:'Margherita Pizza',category:'Veg',price:750,img:'https://laurenslatest.com/wp-content/uploads/2021/01/margherita-pizza-recipe-04.jpg'},
+{id:2,name:'Cheeseburger',category:'Non-Veg',price:600,img:'https://www.foodrepublic.com/wp-content/uploads/2012/03/033_FR11785.jpg'},
+{id:3,name:'Sushi Platter',category:'Non-Veg',price:1200,img:'https://tse4.mm.bing.net/th/id/OIP.beJYJl2UgX1U6tULmBQ1hQHaHa?rs=1&pid=ImgDetMain&o=7&rm=3'},
+{id:4,name:'Pasta Carbonara',category:'Veg',price:900,img:'https://tse1.mm.bing.net/th/id/OIP.K3ZD6PUkv0zl_77TC8PDPQHaLH?rs=1&pid=ImgDetMain&o=7&rm=3'},
+{id:5,name:'Caesar Salad',category:'Veg',price:500,img:'https://natashaskitchen.com/wp-content/uploads/2019/01/Caesar-Salad-Recipe-3.jpg'},
+{id:6,name:'Chocolate Cake',category:'Desserts',price:400,img:'https://tse4.mm.bing.net/th/id/OIP.3-pLw7L57Z2-TLol1Yr4ugHaLH?rs=1&pid=ImgDetMain&o=7&rm=3'},
+{id:7,name:'Mango Lassi',category:'Beverages',price:150,img:'https://www.indianhealthyrecipes.com/wp-content/uploads/2021/04/mango-lassi.jpg'}
+];
+let cart=[],orders=[],orderIdCounter=1;
+
+// Render Menu
+function renderMenu(category='All'){
+const menuGrid=document.getElementById('menuGrid'); menuGrid.innerHTML='';
+menu.filter(i=>category==='All'||i.category===category).forEach(item=>{
+const div=document.createElement('div'); div.className='menu-item';
+div.innerHTML=`<img src="${item.img}" alt="${item.name}"><h3>${item.name}</h3><p>₹${item.price.toFixed(2)}</p><button onclick="addToCart(${item.id})">Add to Cart</button>`;
+menuGrid.appendChild(div);
+});
+}
+renderMenu();
+function filterCategory(cat){ renderMenu(cat); }
+function addToCart(id){ const item=menu.find(i=>i.id===id); cart.push(item); updateCart(); alert(item.name+' added!'); }
+function updateCart(){ const cartItems=document.getElementById('cartItems'); cartItems.innerHTML=''; let total=0;
+cart.forEach((item,index)=>{ total+=item.price; const li=document.createElement('li'); li.innerHTML=`${item.name} - ₹${item.price.toFixed(2)} <button onclick="removeFromCart(${index})">Remove</button>`; cartItems.appendChild(li); });
+document.getElementById('cartTotal').innerText=total.toFixed(2); document.getElementById('cartCount').innerText=cart.length; }
+function removeFromCart(index){ cart.splice(index,1); updateCart(); }
+function showSection(id){ ['home','menu','cart','login','checkout','tracking','profile','admin'].forEach(sec=>document.getElementById(sec).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
+function adminLogin(){ let pass=prompt("Enter Admin Password:"); if(pass===ADMIN_PASSWORD){showSection('admin');} else{alert("Incorrect password!");} }
+
+document.getElementById('loginForm').addEventListener('submit',e=>{e.preventDefault(); alert('Logged in!'); showSection('home');});
+document.getElementById('checkoutForm').addEventListener('submit',e=>{
+e.preventDefault(); if(cart.length===0){ alert('Cart empty!'); return; }
+cart.forEach(item=>{ orders.push({id:orderIdCounter++,item:item.name,status:'Preparing',price:item.price}); });
+updateTracking(); updateOrderHistory(); updateAdminOrders(); updateReports(); cart.length=0; updateCart(); showSection('home'); alert('Order placed!');
+});
+
+// Tracking & History
+function updateTracking(){ const table=document.getElementById('trackingTable'); table.innerHTML='<tr><th>Order ID</th><th>Item</th><th>Status</th></tr>';
+orders.forEach(o=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${o.id}</td><td>${o.item}</td><td class="status ${o.status}">${o.status}</td>`; table.appendChild(tr); }); }
+function updateOrderHistory(){ const list=document.getElementById('orderHistory'); list.innerHTML=''; orders.forEach(o=>{ const li=document.createElement('li'); li.textContent=`Order ${o.id}: ${o.item} - ${o.status}`; list.appendChild(li); }); }
+
+// Admin Menu
+const adminMenuTable=document.getElementById('adminMenuTable');
+function updateAdminMenu(){ adminMenuTable.innerHTML='<tr><th>ID</th><th>Name</th><th>Category</th><th>Price (₹)</th><th>Action</th></tr>';
+menu.forEach(i=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${i.id}</td><td>${i.name}</td><td>${i.category}</td><td>₹${i.price.toFixed(2)}</td><td><button class="small" onclick="deleteMenuItem(${i.id})">Delete</button></td>`; adminMenuTable.appendChild(tr); }); }
+updateAdminMenu();
+document.getElementById('adminMenuForm').addEventListener('submit',e=>{ e.preventDefault();
+const name=document.getElementById('adminItemName').value; const category=document.getElementById('adminItemCategory').value; const price=parseFloat(document.getElementById('adminItemPrice').value);
+const img=document.getElementById('adminItemImg').value || 'https://source.unsplash.com/200x150/?food'; const id=menu.length?Math.max(...menu.map(i=>i.id))+1:1;
+menu.push({id,name,category,price,img}); renderMenu(); updateAdminMenu(); document.getElementById('adminMenuForm').reset(); });
+function deleteMenuItem(id){ menu=menu.filter(i=>i.id!==id); renderMenu(); updateAdminMenu(); }
+
+// Admin Orders
+const adminOrdersTable=document.getElementById('adminOrdersTable');
+function updateAdminOrders(){ adminOrdersTable.innerHTML='<tr><th>Order ID</th><th>Item</th><th>Status</th><th>Action</th></tr>';
+orders.forEach(o=>{
+const tr=document.createElement('tr');
+tr.innerHTML=`<td>${o.id}</td><td>${o.item}</td><td>${o.status}</td>
+<td>
+<select onchange="updateOrderStatus(${o.id},this.value)">
+<option ${o.status==='Preparing'?'selected':''}>Preparing</option>
+<option ${o.status==='Out for delivery'?'selected':''}>Out for delivery</option>
+<option ${o.status==='Delivered'?'selected':''}>Delivered</option>
+</select>
+</td>`;
+adminOrdersTable.appendChild(tr);
+}); }
+
+function updateOrderStatus(id,status){ const order=orders.find(o=>o.id===id); order.status=status; updateTracking(); updateOrderHistory(); updateReports(); }
+
+// Reports
+function updateReports(){ document.getElementById('reportTotalOrders').innerText=orders.length; document.getElementById('reportRevenue').innerText=orders.reduce((sum,o)=>sum+o.price,0).toFixed(2); }
+
+</script>
+</body>
+</html>
 
