@@ -1,252 +1,826 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FoodExpress India</title>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-<style>
-* { box-sizing:border-box; margin:0; padding:0; font-family: 'Roboto', sans-serif; }
-body { background:#f4f4f4; color:#333; line-height:1.6; }
-header { background:#ff5722; color:#fff; padding:15px 20px; display:flex; justify-content:space-between; flex-wrap:wrap; align-items:center; font-family:'Poppins',sans-serif;}
-header h1 { font-size:1.8em; }
-nav { display:flex; flex-wrap:wrap; gap:5px; align-items:center; }
-nav button { background:#fff; color:#ff5722; border:none; padding:8px 12px; border-radius:5px; cursor:pointer; font-weight:600; }
-nav button:hover { background:#ffc1a3; }
-.cart-badge { background:#fff; color:#ff5722; border-radius:50%; padding:2px 8px; font-weight:bold; margin-left:5px; }
-section { padding:20px; max-width:1200px; margin:auto; background:#fff; border-radius:10px; margin-top:20px; box-shadow:0 2px 8px rgba(0,0,0,0.1);}
-.hidden { display:none; }
-h2 { margin-bottom:15px; color:#ff5722; }
-.menu-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap:15px; }
-.menu-item { background:#fff; border-radius:10px; padding:15px; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.15); transition: transform 0.2s, box-shadow 0.2s;}
-.menu-item:hover { transform: scale(1.03); box-shadow:0 4px 15px rgba(0,0,0,0.2);}
-.menu-item img { width:100%; border-radius:10px; height:150px; object-fit:cover; }
-.menu-item button { margin-top:10px; padding:8px 12px; background:#ff5722; color:#fff; border:none; border-radius:5px; cursor:pointer; font-weight:600;}
-.menu-item button:hover { background:#e64a19; }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FoodExpress — Modern Food Delivery (Single-file SPA)</title>
+  <meta name="description" content="FoodExpress — Single-file SPA. Landing home, Menu, Item details, Cart, Auth, Checkout, Order tracking, Profile, Admin dashboard." />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#fbfaf9;
+      --card:#fff;
+      --muted:#6b7280;
+      --accent:#ff5722;
+      --accent2:#e64a19;
+      --radius:12px;
+      --shadow:0 8px 24px rgba(15,23,42,0.06);
+      --maxw:1200px;
+      --glass: rgba(255,87,34,0.06);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: 'Roboto', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background: linear-gradient(180deg,#fffaf8,#fbf9f8);
+      color:#0f172a;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:18px;
+    }
+    .container{max-width:var(--maxw);margin:0 auto;padding:12px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{
+      width:56px;height:56px;border-radius:12px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      display:grid;place-items:center;color:white;font-weight:800;font-family:'Poppins',sans-serif;font-size:18px;
+      box-shadow:var(--shadow)
+    }
+    header h1{font-family:'Poppins',sans-serif;margin:0;font-size:18px;color:var(--accent2)}
+    nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    nav button{background:transparent;border:0;padding:8px 10px;border-radius:10px;cursor:pointer;font-weight:600;color:var(--accent2)}
+    nav button.nav-active{background:var(--glass);font-weight:700}
+    .controls{display:flex;gap:10px;align-items:center}
+    .card{background:var(--card);padding:12px;border-radius:var(--radius);box-shadow:var(--shadow)}
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:18px;margin-top:16px}
+    @media(max-width:980px){.grid{grid-template-columns:1fr}.sidebar{order:2}}
+    .hero{display:flex;gap:14px;align-items:center;padding:18px}
+    .popular-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    @media(max-width:1000px){.popular-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:600px){.popular-grid{grid-template-columns:1fr}}
+    .thumb{height:120px;border-radius:10px;background:#fff3ef;display:grid;place-items:center;font-size:36px;color:var(--accent2)}
+    .menu-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    @media(max-width:900px){.menu-grid{grid-template-columns:1fr}}
+    .menu-item{display:flex;gap:12px;align-items:center;padding:12px;border-radius:10px;transition:transform .15s,box-shadow .15s}
+    .menu-item:hover{transform:translateY(-6px);box-shadow:0 12px 30px rgba(15,23,42,0.08)}
+    .meta h4{margin:0}
+    .small{font-size:13px;color:var(--muted)}
+    .btn{background:var(--accent);color:#fff;border:0;padding:8px 10px;border-radius:10px;cursor:pointer;font-weight:600}
+    .btn.ghost{background:transparent;color:var(--accent2);border:1px solid rgba(0,0,0,0.04)}
+    .filters{display:flex;gap:8px;flex-wrap:wrap}
+    input[type=text],select,input[type=date],input[type=number]{padding:8px;border-radius:8px;border:1px solid #e6e9ef}
+    .sidebar .cart-items{max-height:380px;overflow:auto}
+    .status{padding:6px 8px;border-radius:8px;font-size:13px}
+    .status.prep{background:#fff7ed;color:#92400e}
+    .status.out{background:#ecfeff;color:#036666}
+    .nav-active{font-weight:700}
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;padding:18px;z-index:40}
+    .modal .dialog{width:100%;max-width:760px;background:white;border-radius:12px;padding:18px;box-shadow:0 20px 50px rgba(2,6,23,0.2)}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:8px;border-bottom:1px solid #f1f5f9;text-align:left}
+    .small-muted{font-size:12px;color:var(--muted)}
+    .cart-badge{background:#fff;color:var(--accent2);border-radius:50%;padding:4px 8px;font-weight:700;margin-left:6px}
+    .menu-thumb{width:120px;height:88px;border-radius:8px;object-fit:cover;background:#f3f4f6}
+    footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
 
-#cartItems { list-style:none; padding:0; margin:0 0 15px 0; }
-#cartItems li { background:#fff; margin-bottom:10px; padding:10px; border-radius:5px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 1px 5px rgba(0,0,0,0.1);}
-#cartItems li button { background:#ff5722; color:#fff; border:none; border-radius:5px; padding:5px 10px; cursor:pointer;}
-#cartItems li button:hover { background:#e64a19; }
-
-form { background:#fff; padding:15px; border-radius:10px; max-width:500px; margin:auto; box-shadow:0 2px 8px rgba(0,0,0,0.1);}
-form label { display:block; margin-top:10px; font-weight:600; }
-form input, form select { width:100%; padding:8px; margin-top:5px; border-radius:5px; border:1px solid #ccc; }
-form button { margin-top:15px; padding:10px 15px; background:#ff5722; color:#fff; border:none; border-radius:5px; cursor:pointer; font-weight:600;}
-form button:hover { background:#e64a19; }
-
-table { width:100%; border-collapse: collapse; margin-top:10px; }
-table, th, td { border:1px solid #ccc; }
-th, td { padding:8px; text-align:left; }
-.status { padding:5px 10px; border-radius:5px; color:#fff; font-weight:600; }
-.status.Preparing { background:#ff9800; }
-.status["Out for delivery"] { background:#4caf50; }
-.status.Delivered { background:#2196f3; }
-
-button.small { padding:4px 8px; font-size:0.9em; }
-.category-filters { margin-bottom:15px; display:flex; gap:10px; flex-wrap:wrap; }
-.category-filters button { background:#ff5722; color:#fff; border:none; border-radius:5px; padding:6px 12px; cursor:pointer; font-weight:600;}
-.category-filters button:hover { background:#e64a19; }
-
-@media(max-width:768px){ nav button { margin:5px 5px 0 0; } }
-</style>
+    /* landing-specific */
+    .landing-hero{
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:18px;
+      align-items:center;
+      padding:28px;
+      border-radius:14px;
+      background: url('https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1600&q=60') center/cover no-repeat;
+      color:white;
+    }
+    .hero-overlay{background:linear-gradient(180deg, rgba(0,0,0,0.45), rgba(0,0,0,0.22)); padding:28px; border-radius:14px}
+    .cta-row{display:flex;gap:10px;margin-top:12px}
+    .cta-primary{background:#fff;color:var(--accent2);padding:10px 14px;border-radius:10px;font-weight:700}
+    .cta-secondary{background:transparent;border:1px solid rgba(255,255,255,0.9);color:#fff;padding:10px 14px;border-radius:10px;font-weight:700}
+    .features{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}
+    @media(max-width:900px){ .landing-hero{grid-template-columns:1fr} .features{grid-template-columns:repeat(2,1fr)} }
+    .feature{background:rgba(255,255,255,0.95);padding:12px;border-radius:10px;text-align:center;color:var(--accent2)}
+    .categories-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:18px}
+    @media(max-width:1000px){ .categories-grid{grid-template-columns:repeat(3,1fr)} }
+    @media(max-width:600px){ .categories-grid{grid-template-columns:repeat(2,1fr)} }
+    .category-card{border-radius:10px;padding:12px;text-align:center;background:#fff;box-shadow:0 6px 18px rgba(15,23,42,0.05)}
+    .popular-card{display:flex;gap:12px;align-items:center;padding:12px;border-radius:10px;background:#fff}
+  </style>
 </head>
 <body>
+  <div class="container" id="app">
+    <header>
+      <div class="brand">
+        <div class="logo">FE</div>
+        <div>
+          <h1>FoodExpress</h1>
+          <div class="small">Local flavors · Global menu</div>
+        </div>
+      </div>
 
-<header>
-<h1>🍴 FoodExpress India</h1>
-<nav>
-<button onclick="showSection('home')">Home</button>
-<button onclick="showSection('menu')">Menu</button>
-<button onclick="showSection('cart')">Cart <span id="cartCount" class="cart-badge">0</span></button>
-<button onclick="showSection('login')">Login</button>
-<button onclick="showSection('checkout')">Checkout</button>
-<button onclick="showSection('tracking')">Order Tracking</button>
-<button onclick="showSection('profile')">Profile</button>
-<button onclick="adminLogin()">Admin Dashboard</button>
-</nav>
-</header>
+      <nav aria-label="Main navigation">
+        <button data-route="home" class="nav-btn nav-active">Home</button>
+        <button data-route="menu" class="nav-btn">Menu</button>
+        <button data-route="cart" class="nav-btn">Cart <span id="cartCount" class="cart-badge">0</span></button>
+        <button data-route="orders" class="nav-btn">Track Order</button>
+        <button data-route="profile" class="nav-btn">Profile</button>
+        <button id="openLogin" class="nav-btn">Login</button>
+      </nav>
 
-<section id="home">
-<h2>Welcome to FoodExpress India 🍕</h2>
-<p>Order your favorite meals from our international menu. Fast delivery guaranteed! Prices in ₹.</p>
-<img src="https://source.unsplash.com/800x300/?restaurant,food" style="width:100%; border-radius:10px; margin-top:15px;">
-</section>
+      <div class="controls">
+        <div class="small">Currency</div>
+        <select id="currencySelect">
+          <option>INR</option>
+          <option>USD</option>
+          <option>EUR</option>
+          <option>JPY</option>
+        </select>
+        <button id="toggleAdmin" class="btn ghost">Admin</button>
+      </div>
+    </header>
 
-<section id="menu" class="hidden">
-<h2>Menu</h2>
-<div class="category-filters">
-<button onclick="filterCategory('All')">All</button>
-<button onclick="filterCategory('Veg')">Veg</button>
-<button onclick="filterCategory('Non-Veg')">Non-Veg</button>
-<button onclick="filterCategory('Beverages')">Beverages</button>
-<button onclick="filterCategory('Desserts')">Desserts</button>
+    <main class="grid">
+      <section id="mainView">
+        <!-- NEW HOME (landing) -->
+        <div id="page-home" class="card page">
+          <div class="landing-hero">
+            <div class="hero-overlay">
+              <h2 style="margin:0;font-size:28px">Delicious Food, Delivered Fast 🚀</h2>
+              <p style="margin-top:8px;font-size:15px;max-width:560px">Explore a curated international menu with local favorites. Fresh ingredients, lightning-fast delivery and secure payments.</p>
+              <div class="cta-row">
+                <button class="cta-primary" id="heroOrderNow">Order Now</button>
+                <button class="cta-secondary" id="heroOffers">View Offers</button>
+              </div>
+
+              <div class="features" style="margin-top:20px">
+                <div class="feature">
+                  <div style="font-size:20px">⏱️</div>
+                  <div style="font-weight:700;margin-top:6px">30-min Delivery</div>
+                  <div class="small" style="margin-top:6px">Fast & reliable</div>
+                </div>
+                <div class="feature">
+                  <div style="font-size:20px">🥗</div>
+                  <div style="font-weight:700;margin-top:6px">Fresh & Hygienic</div>
+                  <div class="small" style="margin-top:6px">Quality assured</div>
+                </div>
+                <div class="feature">
+                  <div style="font-size:20px">💳</div>
+                  <div style="font-weight:700;margin-top:6px">Multiple Payments</div>
+                  <div class="small" style="margin-top:6px">UPI, Cards & COD</div>
+                </div>
+                <div class="feature">
+                  <div style="font-size:20px">📞</div>
+                  <div style="font-weight:700;margin-top:6px">24/7 Support</div>
+                  <div class="small" style="margin-top:6px">We're here to help</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="padding:18px;">
+              <div class="card" style="padding:14px">
+                <h4 style="margin:0 0 10px 0">Featured Categories</h4>
+                <div class="categories-grid" id="homeCategories">
+                  <!-- filled by JS -->
+                </div>
+              </div>
+
+              <div class="card" style="margin-top:12px;padding:12px">
+                <h4 style="margin:0 0 10px 0">Popular Right Now</h4>
+                <div id="homePopular" class="popular-grid"></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:18px;display:flex;justify-content:space-between;align-items:center">
+            <div class="small-muted">Discover new tastes and support local kitchens</div>
+            <div>
+              <a href="#" class="small-muted" id="homeAbout">About Us</a> ·
+              <a href="#" class="small-muted" id="homeContact">Contact</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- MENU (moved full menu here) -->
+        <div id="page-menu" class="card page" style="display:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+            <div>
+              <h3>Menu</h3>
+              <div class="small">Search, filter and explore — prices shown in selected currency</div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <input id="searchInput" type="text" placeholder="Search dishes, cuisines..." />
+              <select id="filterCuisine"><option value="all">All Cuisines</option></select>
+              <button id="clearFilter" class="btn ghost">Clear</button>
+            </div>
+          </div>
+
+          <!-- category buttons -->
+          <div id="categoryList" class="filters" style="margin-top:12px"></div>
+
+          <div style="margin-top:12px" class="menu-grid" id="menuGrid"></div>
+        </div>
+
+        <!-- Item modal placeholder -->
+        <div id="page-item" class="card page" style="display:none"></div>
+
+        <!-- CART -->
+        <div id="page-cart" class="card page" style="display:none">
+          <h3>Your Cart 🛒</h3>
+          <div class="card">
+            <div id="cartPageItems" class="cart-list"></div>
+            <div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center">
+              <div class="small-muted">Delivery fee and taxes calculated at checkout</div>
+              <div><strong id="cartPageTotal">0.00</strong></div>
+            </div>
+            <div style="margin-top:12px"><button id="gotoCheckout" class="btn">Proceed to Checkout</button></div>
+          </div>
+        </div>
+
+<!-- CHECKOUT -->
+<div id="page-checkout" class="card page" style="display:none">
+  <h3>Checkout 🧾</h3>
+  <div style="display:flex;gap:12px;flex-wrap:wrap">
+    
+    <!-- Left: Form -->
+    <div style="flex:1;min-width:260px" class="card">
+      <h4>Delivery / Pickup</h4>
+      <form id="checkoutForm">
+        
+        <label for="checkoutType" class="small">Order type</label>
+        <select id="checkoutType" name="checkoutType" required>
+          <option value="delivery">Delivery</option>
+          <option value="pickup">Pickup</option>
+        </select>
+
+        <!-- Inline row for Name, Phone, Payment -->
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;">
+          <div style="flex:1; min-width:120px;">
+            <label for="coName" class="small">Name</label>
+            <input id="coName" name="coName" type="text" placeholder="Name" required />
+          </div>
+
+          <div style="flex:1; min-width:120px;">
+            <label for="coPhone" class="small">Phone</label>
+            <input id="coPhone" name="coPhone" type="tel" placeholder="Phone" pattern="[0-9]{10}" required />
+          </div>
+
+          <div style="flex:1; min-width:120px;">
+            <label for="coPayment" class="small">Payment</label>
+            <select id="coPayment" name="coPayment" required>
+              <option value="cod">COD</option>
+              <option value="card">Card</option>
+              <option value="upi">UPI</option>
+              <option value="paypal">PayPal</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Delivery fields -->
+        <div id="deliveryFields" style="margin-top:10px;">
+          <label for="coAddress" class="small">Address</label>
+          <input id="coAddress" name="coAddress" type="text" placeholder="Delivery address" />
+
+          <label for="coDate" class="small">Delivery Date</label>
+          <input id="coDate" name="coDate" type="date" />
+
+          <label for="coSlot" class="small">Time Slot</label>
+          <select id="coSlot" name="coSlot" required>
+            <option value="">Select Time Slot</option>
+          </select>
+        </div>
+
+        <!-- Payment info (shown when not COD) -->
+        <div id="paymentFields" style="display:none; margin-top:10px;">
+          <label class="small">Payment Info</label>
+          <input id="paymentInfo" type="text" placeholder="Card number / UPI ID / PayPal email" />
+        </div>
+      </form>
+    </div>
+
+    <!-- Right: Order Summary -->
+    <div style="width:320px" class="card">
+      <h4>Order Summary</h4>
+      <div id="coSummary"></div>
+      <div style="margin-top:10px">
+        <button id="placeOrderBtn" class="btn">Place Order</button>
+      </div>
+    </div>
+
+  </div>
 </div>
-<div class="menu-grid" id="menuGrid"></div>
-</section>
 
-<section id="cart" class="hidden">
-<h2>Your Cart 🛒</h2>
-<ul id="cartItems"></ul>
-<p><strong>Total: ₹<span id="cartTotal">0.00</span></strong></p>
-<button onclick="showSection('checkout')">Proceed to Checkout</button>
-</section>
+        <!-- TRACK ORDERS -->
+        <div id="page-orders" class="card page" style="display:none">
+          <h3>Order Tracking 🚚</h3>
+          <div class="small-muted">Enter your order ID to see live status (demo updates)</div>
+          <div style="display:flex;gap:8px;margin-top:8px"><input id="trackId" type="text" placeholder="ORD..." /><button id="trackBtn" class="btn">Track</button></div>
+          <div id="trackResult" style="margin-top:12px"></div>
+        </div>
 
-<section id="login" class="hidden">
-<h2>Login 🔑</h2>
-<form id="loginForm">
-<label>Email</label>
-<input type="email" required>
-<label>Password</label>
-<input type="password" required>
-<button type="submit">Login</button>
-</form>
-</section>
+        <!-- PROFILE -->
+        <div id="page-profile" class="card page" style="display:none">
+          <h3>Your Profile 👤</h3>
+          <div style="display:flex;gap:12px;flex-wrap:wrap">
+            <div style="flex:1;min-width:260px" class="card">
+              <label class="small">Name</label><input id="pfName" type="text" />
+              <label class="small">Phone</label><input id="pfPhone" type="text" />
+              <label class="small">Email</label><input id="pfEmail" type="text" />
+              <div style="margin-top:10px"><button id="saveProfile" class="btn">Save</button></div>
+            </div>
+            <div style="width:320px" class="card">
+              <h4>Past Orders</h4>
+              <ul id="pfOrders" class="small-muted"></ul>
+            </div>
+          </div>
+        </div>
 
-<section id="checkout" class="hidden">
-<h2>Checkout 🧾</h2>
-<form id="checkoutForm">
-<label>Full Name</label><input type="text" required>
-<label>Delivery Address</label><input type="text" required>
-<label>Delivery Slot</label>
-<select required>
-<option value="">Select Slot</option>
-<option>10:00 AM - 12:00 PM</option>
-<option>12:00 PM - 2:00 PM</option>
-<option>6:00 PM - 8:00 PM</option>
-<option>8:00 PM - 10:00 PM</option>
-</select>
-<label>Payment Method</label>
-<select required>
-<option value="">Select</option>
-<option value="card">Credit/Debit Card</option>
-<option value="cash">Cash on Delivery</option>
-<option value="upi">UPI</option>
-</select>
-<button type="submit">Place Order</button>
-</form>
-</section>
+        <!-- ADMIN -->
+        <div id="page-admin" class="card page" style="display:none">
+          <h3>Admin Dashboard 🔧</h3>
+          <div style="display:grid;grid-template-columns:1fr 420px;gap:12px">
+            <div>
+              <div class="card">
+                <h4>Restaurants / Menu Management</h4>
+                <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+                  <input id="admItemName" placeholder="Dish name"/>
+                  <input id="admItemPrice" placeholder="Price (INR)"/>
+                  <select id="admCuisine"><option>Indian</option><option>Italian</option><option>Japanese</option><option>Fusion</option><option>Spanish</option></select>
+                  <button id="addItemBtn" class="btn">Add</button>
+                </div>
+                <table id="admMenuTable"><thead><tr><th>Dish</th><th>Price</th><th>Cuisine</th><th>Actions</th></tr></thead><tbody></tbody></table>
+              </div>
 
-<section id="tracking" class="hidden">
-<h2>Order Tracking 🚚</h2>
-<table id="trackingTable">
-<tr><th>Order ID</th><th>Item</th><th>Status</th></tr>
-</table>
-</section>
+              <div class="card" style="margin-top:12px">
+                <h4>Orders</h4>
+                <table id="admOrdersTable"><thead><tr><th>ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Actions</th></tr></thead><tbody></tbody></table>
+              </div>
 
-<section id="profile" class="hidden">
-<h2>User Profile 👤</h2>
-<p><strong>Name:</strong> John Doe</p>
-<p><strong>Email:</strong> john@example.com</p>
-<h3>Order History</h3>
-<ul id="orderHistory"></ul>
-</section>
+            </div>
+            <div>
+              <div class="card">
+                <h4>Delivery Boy Management</h4>
+                <div style="display:flex;gap:8px;margin-bottom:8px"><input id="dbName" placeholder="Name"/><input id="dbPhone" placeholder="Phone"/><button id="addDbBtn" class="btn">Add</button></div>
+                <ul id="dbList" class="small-muted"></ul>
+              </div>
 
-<section id="admin" class="hidden">
-<h2>Admin Dashboard 🔧</h2>
-<h3>Menu Management</h3>
-<form id="adminMenuForm">
-<label>Item Name</label><input type="text" required id="adminItemName">
-<label>Category</label>
-<select required id="adminItemCategory">
-<option value="Veg">Veg</option>
-<option value="Non-Veg">Non-Veg</option>
-<option value="Beverages">Beverages</option>
-<option value="Desserts">Desserts</option>
-</select>
-<label>Price (₹)</label><input type="number" required id="adminItemPrice">
-<label>Image URL</label><input type="text" id="adminItemImg">
-<button type="submit">Add Item</button>
-</form>
-<table id="adminMenuTable">
-<tr><th>ID</th><th>Name</th><th>Category</th><th>Price (₹)</th><th>Action</th></tr>
-</table>
-<h3>Orders</h3>
-<table id="adminOrdersTable">
-<tr><th>Order ID</th><th>Item</th><th>Status</th><th>Action</th></tr>
-</table>
-<h3>Reports</h3>
-<p>Total Orders: <span id="reportTotalOrders">0</span></p>
-<p>Total Revenue: ₹<span id="reportRevenue">0.00</span></p>
-</section>
+              <div class="card" style="margin-top:12px">
+                <h4>Reports</h4>
+                <div class="small-muted">Total Orders: <span id="repTotalOrders">0</span></div>
+                <div class="small-muted">Total Revenue (INR): <span id="repRevenue">0</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-<script>
-const ADMIN_PASSWORD='admin123';
-let menu=[
-{id:1,name:'Margherita Pizza',category:'Veg',price:750,img:'https://laurenslatest.com/wp-content/uploads/2021/01/margherita-pizza-recipe-04.jpg'},
-{id:2,name:'Cheeseburger',category:'Non-Veg',price:600,img:'https://www.foodrepublic.com/wp-content/uploads/2012/03/033_FR11785.jpg'},
-{id:3,name:'Sushi Platter',category:'Non-Veg',price:1200,img:'https://tse4.mm.bing.net/th/id/OIP.beJYJl2UgX1U6tULmBQ1hQHaHa?rs=1&pid=ImgDetMain&o=7&rm=3'},
-{id:4,name:'Pasta Carbonara',category:'Veg',price:900,img:'https://tse1.mm.bing.net/th/id/OIP.K3ZD6PUkv0zl_77TC8PDPQHaLH?rs=1&pid=ImgDetMain&o=7&rm=3'},
-{id:5,name:'Caesar Salad',category:'Veg',price:500,img:'https://natashaskitchen.com/wp-content/uploads/2019/01/Caesar-Salad-Recipe-3.jpg'},
-{id:6,name:'Chocolate Cake',category:'Desserts',price:400,img:'https://tse4.mm.bing.net/th/id/OIP.3-pLw7L57Z2-TLol1Yr4ugHaLH?rs=1&pid=ImgDetMain&o=7&rm=3'},
-{id:7,name:'Mango Lassi',category:'Beverages',price:150,img:'https://www.indianhealthyrecipes.com/wp-content/uploads/2021/04/mango-lassi.jpg'}
-];
-let cart=[],orders=[],orderIdCounter=1;
+      </section>
 
-// Render Menu
-function renderMenu(category='All'){
-const menuGrid=document.getElementById('menuGrid'); menuGrid.innerHTML='';
-menu.filter(i=>category==='All'||i.category===category).forEach(item=>{
-const div=document.createElement('div'); div.className='menu-item';
-div.innerHTML=`<img src="${item.img}" alt="${item.name}"><h3>${item.name}</h3><p>₹${item.price.toFixed(2)}</p><button onclick="addToCart(${item.id})">Add to Cart</button>`;
-menuGrid.appendChild(div);
-});
-}
-renderMenu();
-function filterCategory(cat){ renderMenu(cat); }
-function addToCart(id){ const item=menu.find(i=>i.id===id); cart.push(item); updateCart(); alert(item.name+' added!'); }
-function updateCart(){ const cartItems=document.getElementById('cartItems'); cartItems.innerHTML=''; let total=0;
-cart.forEach((item,index)=>{ total+=item.price; const li=document.createElement('li'); li.innerHTML=`${item.name} - ₹${item.price.toFixed(2)} <button onclick="removeFromCart(${index})">Remove</button>`; cartItems.appendChild(li); });
-document.getElementById('cartTotal').innerText=total.toFixed(2); document.getElementById('cartCount').innerText=cart.length; }
-function removeFromCart(index){ cart.splice(index,1); updateCart(); }
-function showSection(id){ ['home','menu','cart','login','checkout','tracking','profile','admin'].forEach(sec=>document.getElementById(sec).classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
-function adminLogin(){ let pass=prompt("Enter Admin Password:"); if(pass===ADMIN_PASSWORD){showSection('admin');} else{alert("Incorrect password!");} }
+      <aside class="sidebar">
+        <div class="card">
+          <h4>Cart</h4>
+          <div id="sideCart" class="cart-items small-muted">No items yet</div>
+          <div style="margin-top:8px;display:flex;justify-content:space-between;align-items:center"><div class="small-muted">Total</div><div id="sideTotal">0.00</div></div>
+          <div style="margin-top:10px"><button id="viewCartBtn" class="btn">View Cart</button></div>
+        </div>
 
-document.getElementById('loginForm').addEventListener('submit',e=>{e.preventDefault(); alert('Logged in!'); showSection('home');});
-document.getElementById('checkoutForm').addEventListener('submit',e=>{
-e.preventDefault(); if(cart.length===0){ alert('Cart empty!'); return; }
-cart.forEach(item=>{ orders.push({id:orderIdCounter++,item:item.name,status:'Preparing',price:item.price}); });
-updateTracking(); updateOrderHistory(); updateAdminOrders(); updateReports(); cart.length=0; updateCart(); showSection('home'); alert('Order placed!');
-});
+        <div class="card" style="margin-top:12px">
+          <h4>Quick Order</h4>
+          <div class="small-muted">Fast pickup option</div>
+          <div style="margin-top:8px"><button id="quickPickup2" class="btn ghost">Pickup Now</button></div>
+        </div>
+      </aside>
+    </main>
 
-// Tracking & History
-function updateTracking(){ const table=document.getElementById('trackingTable'); table.innerHTML='<tr><th>Order ID</th><th>Item</th><th>Status</th></tr>';
-orders.forEach(o=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${o.id}</td><td>${o.item}</td><td class="status ${o.status}">${o.status}</td>`; table.appendChild(tr); }); }
-function updateOrderHistory(){ const list=document.getElementById('orderHistory'); list.innerHTML=''; orders.forEach(o=>{ const li=document.createElement('li'); li.textContent=`Order ${o.id}: ${o.item} - ${o.status}`; list.appendChild(li); }); }
+    <footer>© <span id="year"></span> FoodExpress — Demo single-file SPA · About · Contact · Privacy</footer>
+  </div>
 
-// Admin Menu
-const adminMenuTable=document.getElementById('adminMenuTable');
-function updateAdminMenu(){ adminMenuTable.innerHTML='<tr><th>ID</th><th>Name</th><th>Category</th><th>Price (₹)</th><th>Action</th></tr>';
-menu.forEach(i=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${i.id}</td><td>${i.name}</td><td>${i.category}</td><td>₹${i.price.toFixed(2)}</td><td><button class="small" onclick="deleteMenuItem(${i.id})">Delete</button></td>`; adminMenuTable.appendChild(tr); }); }
-updateAdminMenu();
-document.getElementById('adminMenuForm').addEventListener('submit',e=>{ e.preventDefault();
-const name=document.getElementById('adminItemName').value; const category=document.getElementById('adminItemCategory').value; const price=parseFloat(document.getElementById('adminItemPrice').value);
-const img=document.getElementById('adminItemImg').value || 'https://source.unsplash.com/200x150/?food'; const id=menu.length?Math.max(...menu.map(i=>i.id))+1:1;
-menu.push({id,name,category,price,img}); renderMenu(); updateAdminMenu(); document.getElementById('adminMenuForm').reset(); });
-function deleteMenuItem(id){ menu=menu.filter(i=>i.id!==id); renderMenu(); updateAdminMenu(); }
+  <!-- MODALS -->
+  <div class="modal" id="itemModal"><div class="dialog"><div id="itemContent"></div><div style="margin-top:12px;text-align:right"><button id="addToCartFromModal" class="btn">Add to cart</button> <button id="closeModal" class="btn ghost">Close</button></div></div></div>
 
-// Admin Orders
-const adminOrdersTable=document.getElementById('adminOrdersTable');
-function updateAdminOrders(){ adminOrdersTable.innerHTML='<tr><th>Order ID</th><th>Item</th><th>Status</th><th>Action</th></tr>';
-orders.forEach(o=>{
-const tr=document.createElement('tr');
-tr.innerHTML=`<td>${o.id}</td><td>${o.item}</td><td>${o.status}</td>
-<td>
-<select onchange="updateOrderStatus(${o.id},this.value)">
-<option ${o.status==='Preparing'?'selected':''}>Preparing</option>
-<option ${o.status==='Out for delivery'?'selected':''}>Out for delivery</option>
-<option ${o.status==='Delivered'?'selected':''}>Delivered</option>
-</select>
-</td>`;
-adminOrdersTable.appendChild(tr);
-}); }
+  <div class="modal" id="authModal"><div class="dialog"><h3 id="authTitle">Login / Register</h3>
+    <div style="display:flex;gap:8px"><input id="authEmail" placeholder="Email or phone"/><input id="authPwd" placeholder="Password" type="password"/></div>
+    <div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end"><button id="authLogin" class="btn">Login</button><button id="authRegister" class="btn ghost">Register</button></div>
+  </div></div>
 
-function updateOrderStatus(id,status){ const order=orders.find(o=>o.id===id); order.status=status; updateTracking(); updateOrderHistory(); updateReports(); }
+  <script>
+    /**********************
+     * Data & state
+     **********************/
+    let menu = [
+      {id:1,name:'Margherita Pizza',price:750,cuisine:'Italian',desc:'Classic tomato, mozzarella, basil',img:'https://cookieandkate.com/images/2021/07/classic-margherita-pizza.jpg'},
+      {id:2,name:'Sushi Platter',price:1200,cuisine:'Japanese',desc:'Assorted nigiri & rolls',img:'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=60'},
+      {id:3,name:'Butter Chicken',price:650,cuisine:'Indian',desc:'Creamy spiced curry with rice',img:'https://masalaandchai.com/wp-content/uploads/2022/03/Butter-Chicken.jpg'},
+      {id:4,name:'Vegan Bowl',price:540,cuisine:'Fusion',desc:'Quinoa, roasted veg, tahini',img:'https://tse2.mm.bing.net/th/id/OIP.qkoV97hpW-WZ1JkolpCP_gHaKG?r=0&rs=1&pid=ImgDetMain&o=7&rm=3'},
+      {id:5,name:'Churros',price:250,cuisine:'Spanish',desc:'Cinnamon sugar fried dough',img:'https://natashaskitchen.com/wp-content/uploads/2020/03/Churros-Recipe-5.jpg'},
+      {id:6,name:'Pasta Carbonara',price:690,cuisine:'Italian',desc:'Creamy egg & pancetta',img:'https://images.unsplash.com/photo-1525755662778-989d0524087e?auto=format&fit=crop&w=800&q=60'},
+      {id:7,name:'Chocolate Cake',price:320,cuisine:'Dessert',desc:'Rich & moist',img:'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=60'},
+      {id:8,name:'Mango Lassi',price:140,cuisine:'Beverage',desc:'Sweet mango yogurt drink',img:'https://i0.wp.com/mocktailsandmore.com/wp-content/uploads/2022/03/classic-mango-lassi-sq.jpg?w=1200&ssl=1'}
+    ];
 
-// Reports
-function updateReports(){ document.getElementById('reportTotalOrders').innerText=orders.length; document.getElementById('reportRevenue').innerText=orders.reduce((sum,o)=>sum+o.price,0).toFixed(2); }
+    const rates = { INR:1, USD:0.012, EUR:0.011, JPY:1.72 };
 
-</script>
+    let state = {
+      route: 'home',
+      cart: {},
+      orders: [],
+      user: null,
+      admin: false,
+      deliveryBoys: [],
+      lockedOrders: {}
+    };
+
+    // DOM refs
+    const pages = document.querySelectorAll('.page');
+    const homePopular = document.getElementById('homePopular');
+    const homeCategories = document.getElementById('homeCategories');
+    const categoryList = document.getElementById('categoryList');
+    const menuGrid = document.getElementById('menuGrid');
+    const filterCuisine = document.getElementById('filterCuisine');
+    const searchInput = document.getElementById('searchInput');
+    const sideCart = document.getElementById('sideCart');
+    const sideTotal = document.getElementById('sideTotal');
+    const itemModal = document.getElementById('itemModal');
+    const itemContent = document.getElementById('itemContent');
+    const addToCartFromModal = document.getElementById('addToCartFromModal');
+    const authModal = document.getElementById('authModal');
+    const authLogin = document.getElementById('authLogin');
+    const authRegister = document.getElementById('authRegister');
+    const openLogin = document.getElementById('openLogin');
+    const adminBtn = document.getElementById('toggleAdmin');
+    const cartCount = document.getElementById('cartCount');
+
+    // Checkout refs (may be null if markup changed)
+    const checkoutType = document.getElementById('checkoutType');
+    const deliveryFields = document.getElementById('deliveryFields');
+    const coPayment = document.getElementById('coPayment');
+    const paymentFields = document.getElementById('paymentFields');
+    const paymentInfo = document.getElementById('paymentInfo');
+    const coSlot = document.getElementById('coSlot');
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    /**********************
+     * Helpers
+     **********************/
+    function formatMoneyINR(v){
+      const cur = document.getElementById('currencySelect').value || 'INR';
+      const rate = rates[cur] || 1;
+      const display = (v * rate);
+      if(cur === 'INR') return new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR'}).format(display);
+      return new Intl.NumberFormat('en-US',{style:'currency',currency:cur}).format(display);
+    }
+    function save(){ try{ localStorage.setItem('fe_demo', JSON.stringify(state)); }catch(e){ console.warn('Could not save state',e);} }
+    function load(){ const s = localStorage.getItem('fe_demo'); if(s){ try{ const parsed = JSON.parse(s); state = Object.assign({}, state, parsed); }catch(e){ console.warn('Invalid saved state',e);} } }
+
+    /**********************
+     * Home rendering
+     **********************/
+    function renderHomePopular(){
+      if(!homePopular) return;
+      homePopular.innerHTML = '';
+      menu.slice(0,4).forEach(it=>{
+        const d = document.createElement('div'); d.className='popular-card';
+        d.innerHTML = `
+          <img src="${it.img}" alt="${it.name}" style="width:64px;height:64px;border-radius:8px;object-fit:cover">
+          <div style="flex:1">
+            <strong>${it.name}</strong>
+            <div class="small">${it.cuisine} • ${formatMoneyINR(it.price)}</div>
+          </div>
+          <div><button class="btn" data-id="${it.id}">Order</button></div>
+        `;
+        homePopular.appendChild(d);
+      });
+    }
+
+    function renderHomeCategories(){
+      if(!homeCategories) return;
+      const cats = Array.from(new Set(menu.map(m=>m.cuisine)));
+      homeCategories.innerHTML = '';
+      const sampleImgs = {
+        'Indian':'https://images.unsplash.com/photo-1604908177582-7dd9a3d28f9b?auto=format&fit=crop&w=600&q=60',
+        'Italian':'https://images.unsplash.com/photo-1525755662778-989d0524087e?auto=format&fit=crop&w=600&q=60',
+        'Japanese':'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=60',
+        'Fusion':'https://images.unsplash.com/photo-1523986371872-9d3ba2e2f642?auto=format&fit=crop&w=600&q=60',
+        'Spanish':'https://images.unsplash.com/photo-1549237515-2e4d0b4b7a62?auto=format&fit=crop&w=600&q=60',
+        'Dessert':'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=60',
+        'Beverage':'https://images.unsplash.com/photo-1568051243857-c1b6b2b0d1ab?auto=format&fit=crop&w=600&q=60'
+      };
+      cats.forEach(c=>{
+        const div = document.createElement('div'); div.className='category-card';
+        div.innerHTML = `<img src="${sampleImgs[c] || sampleImgs['Fusion']}" style="width:100%;height:80px;object-fit:cover;border-radius:8px"><div style="margin-top:8px;font-weight:700">${c}</div>`;
+        homeCategories.appendChild(div);
+      });
+    }
+
+    /**********************
+     * Menu rendering (full)
+     **********************/
+    function renderCategoriesList(){
+      if(!categoryList) return;
+      const cats = Array.from(new Set(menu.map(m=>m.cuisine)));
+      categoryList.innerHTML = '';
+      const allBtn = document.createElement('button'); allBtn.textContent = 'All'; allBtn.addEventListener('click', ()=>{ filterCuisine.value='all'; renderMenu(); });
+      allBtn.style.background = 'transparent'; allBtn.style.border = '1px solid rgba(0,0,0,0.05)'; allBtn.style.color = 'var(--accent2)'; allBtn.style.padding='6px 10px'; allBtn.style.borderRadius='8px'; categoryList.appendChild(allBtn);
+      cats.forEach(c=>{
+        const b = document.createElement('button'); b.textContent = c; b.addEventListener('click', ()=>{ filterCuisine.value = c; renderMenu(); });
+        categoryList.appendChild(b);
+      });
+      if(filterCuisine) filterCuisine.innerHTML = '<option value="all">All Cuisines</option>' + cats.map(c=>`<option value="${c}">${c}</option>`).join('');
+    }
+
+    function renderMenu(){
+      if(!menuGrid) return;
+      menuGrid.innerHTML = '';
+      const q = (searchInput?.value||'').trim().toLowerCase();
+      const fc = filterCuisine?.value || 'all';
+      menu.filter(i=>{
+        if(fc!=='all' && i.cuisine !== fc) return false;
+        if(q && !(i.name.toLowerCase().includes(q) || (i.cuisine||'').toLowerCase().includes(q))) return false;
+        return true;
+      }).forEach(it=>{
+        const el = document.createElement('div'); el.className='menu-item card';
+        el.innerHTML = `
+          <img class="menu-thumb" src="${it.img}" alt="${it.name}" style="flex-shrink:0">
+          <div style="flex:1">
+            <h4 style="margin:0">${it.name}</h4>
+            <div class="small">${it.cuisine} • ${formatMoneyINR(it.price)}</div>
+            <div class="small" style="margin-top:6px">${it.desc || ''}</div>
+          </div>
+          <div style="width:120px;text-align:right;display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+            <button class="btn" data-id="${it.id}">Add</button>
+            <button class="btn ghost" data-view="${it.id}">Details</button>
+          </div>`;
+        menuGrid.appendChild(el);
+      });
+    }
+
+    /**********************
+     * Cart & modal
+     **********************/
+    function renderSideCart(){
+      const keys = Object.keys(state.cart||{});
+      if(keys.length===0){
+        sideCart.innerHTML = '<div class="small-muted">No items yet</div>';
+        sideTotal.textContent = '0.00';
+        cartCount.textContent = '0';
+        return;
+      }
+      sideCart.innerHTML = '';
+      let total = 0;
+      keys.forEach(id=>{
+        const it = menu.find(m=>String(m.id)===String(id));
+        if(!it) return;
+        const qty = state.cart[id];
+        total += it.price * qty;
+        const row = document.createElement('div'); row.className='card'; row.style.display='flex'; row.style.justifyContent='space-between'; row.style.marginBottom='8px';
+        row.innerHTML = `<div style="max-width:70%"><strong>${it.name}</strong><div class="small">${qty} × ${formatMoneyINR(it.price)}</div></div>
+          <div style="text-align:right">
+            <div class="small">${formatMoneyINR(it.price*qty)}</div>
+            <div style="margin-top:6px">
+              <button class="btn ghost" data-dec="${id}">-</button>
+              <button class="btn ghost" data-inc="${id}">+</button>
+            </div>
+          </div>`;
+        sideCart.appendChild(row);
+      });
+      sideTotal.textContent = formatMoneyINR(total);
+      cartCount.textContent = Object.keys(state.cart||{}).reduce((s,k)=>s+state.cart[k],0);
+    }
+
+    function addToCart(id, qty=1){
+      id = String(id);
+      state.cart[id] = (state.cart[id]||0) + qty;
+      save(); renderSideCart();
+    }
+    function changeQty(id, delta){
+      id = String(id);
+      if(!state.cart[id]) return;
+      state.cart[id] += delta;
+      if(state.cart[id] <= 0) delete state.cart[id];
+      save(); renderSideCart();
+    }
+
+    let currentModalItem = null;
+    function openItemModal(id){
+      const it = menu.find(m=>m.id==id);
+      if(!it) return;
+      currentModalItem = it;
+      itemContent.innerHTML = `
+        <div style="display:flex;gap:12px;align-items:center">
+          <img src="${it.img}" alt="${it.name}" style="width:160px;height:110px;border-radius:8px;object-fit:cover">
+          <div style="flex:1">
+            <h3 style="margin:0">${it.name}</h3>
+            <div class="small">${it.cuisine} • ${formatMoneyINR(it.price)}</div>
+            <p class="small-muted" style="margin-top:8px">${it.desc || ''}</p>
+            <label class="small">Quantity</label>
+            <input id="modalQty" type="number" value="1" min="1" style="width:80px"/>
+          </div>
+        </div>`;
+      itemModal.style.display = 'flex';
+    }
+    function closeItemModal(){ itemModal.style.display = 'none'; currentModalItem = null; }
+
+    /**********************
+     * Checkout & Orders
+     **********************/
+    function openCheckout(){
+      showPage('checkout');
+      const keys = Object.keys(state.cart||{});
+      if(keys.length===0){ alert('Cart empty'); showPage('menu'); return; }
+      const summary = document.getElementById('coSummary');
+      let total = 0;
+      summary.innerHTML = '';
+      keys.forEach(id=>{
+        const it = menu.find(m=>String(m.id)===String(id));
+        if(!it) return;
+        const qty = state.cart[id];
+        total += it.price * qty;
+        const div = document.createElement('div');
+        div.innerHTML = `${qty} × ${it.name} — <strong>${formatMoneyINR(it.price*qty)}</strong>`;
+        summary.appendChild(div);
+      });
+      const dateEl = document.getElementById('coDate'); if(dateEl) dateEl.value = new Date().toISOString().slice(0,10);
+      // populate slots
+      if(coSlot){ coSlot.innerHTML = ''; ['09:00-11:00','12:00-14:00','18:00-20:00','20:00-22:00'].forEach(s=>{ const o=document.createElement('option'); o.value=s; o.textContent=s; coSlot.appendChild(o); }); }
+      summary.insertAdjacentHTML('beforeend',`<div style="margin-top:8px"><strong>Total: ${formatMoneyINR(total)}</strong></div>`);
+    }
+
+    function placeOrder(){
+      const name = document.getElementById('coName')?.value.trim();
+      const phone = document.getElementById('coPhone')?.value.trim();
+      const payment = document.getElementById('coPayment')?.value || 'cod';
+      const paymentInfoVal = document.getElementById('paymentInfo')?.value || '';
+      if(!name || !phone){ alert('Enter name & phone'); return; }
+      if(Object.keys(state.cart||{}).length===0){ alert('Cart empty'); return; }
+      if(payment !== 'cod' && paymentInfoVal.trim() === ''){ alert('Please enter payment details for selected method'); return; }
+      const id = 'ORD'+Date.now();
+      let total = 0;
+      const items = {};
+      Object.keys(state.cart).forEach(k=>{
+        const it = menu.find(m=>String(m.id)===String(k));
+        if(!it) return;
+        items[k] = state.cart[k];
+        total += it.price * state.cart[k];
+      });
+      const order = {
+        id, created: new Date().toISOString(), name, phone,
+        address: document.getElementById('coAddress')?.value || '',
+        date: document.getElementById('coDate')?.value || '',
+        slot: document.getElementById('coSlot')?.value || '',
+        payment, paymentInfo: paymentInfoVal,
+        items, total, status: 'Preparing'
+      };
+      state.orders.push(order); save();
+      state.cart = {}; renderSideCart(); renderCartPage();
+      alert('Order placed: '+id);
+      showPage('orders'); document.getElementById('trackId').value = id;
+      renderOrdersAdminAndTracking();
+    }
+
+    /**********************
+     * Orders & Admin
+     **********************/
+    function renderOrdersAdminAndTracking(){
+      const tb = document.getElementById('admOrdersTable'); if(!tb) return; const tbody = tb.querySelector('tbody');
+      tbody.innerHTML = '';
+      state.orders.forEach(o=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${o.id}</td>
+          <td>${o.name}</td>
+          <td>${formatMoneyINR(o.total)}</td>
+          <td><select data-oid="${o.id}">
+            <option ${o.status==='Preparing'?'selected':''}>Preparing</option>
+            <option ${o.status==='Out for delivery'?'selected':''}>Out for delivery</option>
+            <option ${o.status==='Delivered'?'selected':''}>Delivered</option>
+          </select></td>
+          <td><button data-edit="${o.id}" class="btn">Edit</button>
+              <button data-lock="${o.id}" class="btn ghost">${state.lockedOrders[o.id] ? 'Unlock' : 'Lock'}</button></td>`;
+        tbody.appendChild(tr);
+      });
+
+      document.querySelectorAll('select[data-oid]').forEach(s=>s.addEventListener('change', e=>{
+        const id = e.currentTarget.dataset.oid;
+        if(state.lockedOrders[id]){ alert('Order is locked by admin'); renderOrdersAdminAndTracking(); return; }
+        const val = e.currentTarget.value; const o = state.orders.find(x=>x.id===id); if(o){ o.status = val; save(); renderOrdersAdminAndTracking(); }
+      }));
+      document.querySelectorAll('button[data-edit]').forEach(b=>b.addEventListener('click', e=>{
+        const id = e.currentTarget.dataset.edit; const o = state.orders.find(x=>x.id===id);
+        const newName = prompt('Customer name', o.name); if(newName){ o.name = newName; save(); renderOrdersAdminAndTracking(); }
+      }));
+      document.querySelectorAll('button[data-lock]').forEach(b=>b.addEventListener('click', e=>{
+        const id = e.currentTarget.dataset.lock; state.lockedOrders[id] = !state.lockedOrders[id]; save(); renderOrdersAdminAndTracking();
+      }));
+
+      const tid = document.getElementById('trackId')?.value.trim(); const trk = document.getElementById('trackResult');
+      if(tid){ const found = state.orders.find(o=>o.id===tid); if(found){ trk.innerHTML = `<div><strong>${found.id}</strong></div><div class="small-muted">${found.name}</div><div style="margin-top:6px"><span class="status ${found.status==='Preparing'?'prep':'out'}">${found.status}</span></div>`; } else trk.innerHTML = 'Order not found'; } else trk.innerHTML = '';
+
+      renderReports(); renderAdminMenu(); renderDeliveryBoys(); updateOrderHistory();
+    }
+
+    function renderAdminMenu(){
+      const tbl = document.getElementById('admMenuTable'); if(!tbl) return; const tbody = tbl.querySelector('tbody');
+      tbody.innerHTML = '';
+      menu.forEach(it=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${it.name}</td><td>${formatMoneyINR(it.price)}</td><td>${it.cuisine}</td><td><button data-del="${it.id}" class="btn ghost">Delete</button></td>`;
+        tbody.appendChild(tr);
+      });
+      document.querySelectorAll('button[data-del]').forEach(b=>b.addEventListener('click', e=>{
+        const id = Number(e.currentTarget.dataset.del);
+        menu = menu.filter(m=>m.id !== id);
+        renderMenu(); renderHomePopular(); renderHomeCategories(); renderAdminMenu();
+      }));
+    }
+
+    function renderDeliveryBoys(){
+      const ul = document.getElementById('dbList'); if(!ul) return; ul.innerHTML = '';
+      state.deliveryBoys.forEach((d,i)=>{ const li = document.createElement('li'); li.textContent = `${d.name} — ${d.phone} `; const btn = document.createElement('button'); btn.textContent='Remove'; btn.className='btn ghost'; btn.addEventListener('click', ()=>{ state.deliveryBoys.splice(i,1); save(); renderDeliveryBoys(); }); li.appendChild(btn); ul.appendChild(li); });
+    }
+
+    function renderReports(){ document.getElementById('repTotalOrders').textContent = state.orders.length; const rev = state.orders.reduce((s,o)=>s + (o.total||0),0); document.getElementById('repRevenue').textContent = Math.round(rev); }
+
+    /**********************
+     * Profile / History
+     **********************/
+    function updateOrderHistory(){
+      const list = document.getElementById('pfOrders'); if(!list) return; list.innerHTML = ''; state.orders.forEach(o=>{ const li = document.createElement('li'); li.textContent = `${o.id} — ${o.status} — ${formatMoneyINR(o.total)}`; list.appendChild(li); });
+    }
+
+    /**********************
+     * Events & Wiring
+     **********************/
+    document.querySelectorAll('.nav-btn').forEach(b=>b.addEventListener('click', e=>{
+      const r = e.currentTarget.dataset.route; if(!r) return; showPage(r);
+      if(r==='menu') { renderMenu(); renderCategoriesList(); }
+      if(r==='home') { renderHomePopular(); renderHomeCategories(); }
+      if(r==='orders' || r==='admin') renderOrdersAdminAndTracking();
+      if(r==='profile') renderProfile();
+    }));
+
+    document.addEventListener('click', e=>{
+      if(e.target.matches('[data-id]')) addToCart(e.target.dataset.id);
+      if(e.target.matches('[data-view]')) openItemModal(e.target.dataset.view);
+      if(e.target.matches('[data-inc]')) changeQty(e.target.dataset.inc, 1);
+      if(e.target.matches('[data-dec]')) changeQty(e.target.dataset.dec, -1);
+    });
+
+    addToCartFromModal.addEventListener('click', ()=>{ const q = parseInt(document.getElementById('modalQty').value || 1,10); if(currentModalItem) addToCart(currentModalItem.id, q); closeItemModal(); });
+    document.getElementById('closeModal').addEventListener('click', closeItemModal);
+    document.getElementById('searchInput').addEventListener('input', renderMenu);
+    document.getElementById('filterCuisine').addEventListener('change', renderMenu);
+    document.getElementById('viewCartBtn').addEventListener('click', ()=>{ showPage('cart'); renderCartPage(); });
+    document.getElementById('gotoCheckout').addEventListener('click', openCheckout);
+    document.getElementById('placeOrderBtn').addEventListener('click', placeOrder);
+    document.getElementById('trackBtn').addEventListener('click', ()=>{ const id=document.getElementById('trackId').value.trim(); const found=state.orders.find(o=>o.id===id); const trk=document.getElementById('trackResult'); if(found){ trk.innerHTML=`<div><strong>${found.id}</strong></div><div class="small-muted">${found.name}</div><div style="margin-top:6px"><span class="status ${found.status==='Preparing'?'prep':'out'}">${found.status}</span></div>`; } else trk.innerHTML='Order not found'; });
+
+    document.getElementById('saveProfile').addEventListener('click', ()=>{ state.user = { name:document.getElementById('pfName').value, phone:document.getElementById('pfPhone').value, email:document.getElementById('pfEmail').value }; save(); alert('Profile saved'); });
+
+    openLogin.addEventListener('click', ()=>{ authModal.style.display='flex'; });
+    authLogin.addEventListener('click', ()=>{ state.user = { name:'Demo User', email:document.getElementById('authEmail').value }; save(); authModal.style.display='none'; alert('Logged in'); });
+    authRegister.addEventListener('click', ()=>{ state.user = { name:document.getElementById('authEmail').value, email:document.getElementById('authEmail').value }; save(); authModal.style.display='none'; alert('Registered & logged in'); });
+
+    adminBtn.addEventListener('click', ()=>{ const pw = prompt('Enter admin password (demo)'); if(pw === 'admin123'){ state.admin = true; showPage('admin'); renderAdminMenu(); renderOrdersAdminAndTracking(); renderDeliveryBoys(); renderReports(); } else alert('Invalid'); });
+
+    document.getElementById('addItemBtn').addEventListener('click', ()=>{ const n=document.getElementById('admItemName').value.trim(); const p=parseFloat(document.getElementById('admItemPrice').value)||0; const c=document.getElementById('admCuisine').value; if(!n||!p) return alert('Name & price required'); const id = Date.now(); menu.push({id,name:n,price:p,cuisine:c,desc:''}); renderMenu(); renderHomePopular(); renderHomeCategories(); renderAdminMenu(); document.getElementById('admItemName').value=''; document.getElementById('admItemPrice').value=''; });
+
+    document.getElementById('addDbBtn').addEventListener('click', ()=>{ const n=document.getElementById('dbName').value.trim(); const ph=document.getElementById('dbPhone').value.trim(); if(!n) return alert('Name required'); state.deliveryBoys.push({name:n,phone:ph}); save(); renderDeliveryBoys(); document.getElementById('dbName').value=''; document.getElementById('dbPhone').value=''; });
+
+    document.getElementById('quickPickup2').addEventListener('click', ()=>{ alert('Pickup created (demo)'); });
+
+    function renderCartPage(){
+      const el = document.getElementById('cartPageItems'); if(!el) return; el.innerHTML=''; let total=0;
+      Object.keys(state.cart||{}).forEach(id=>{ const it=menu.find(m=>String(m.id)===String(id)); if(!it) return; const qty=state.cart[id]; total+=it.price*qty; const d=document.createElement('div'); d.className='card'; d.style.display='flex'; d.style.justifyContent='space-between'; d.style.marginBottom='8px'; d.innerHTML = `<div><strong>${it.name}</strong><div class="small">${qty} × ${formatMoneyINR(it.price)}</div></div><div><div>${formatMoneyINR(it.price*qty)}</div><div style="margin-top:6px"><button class="btn ghost" data-dec="${id}">-</button><button class="btn ghost" data-inc="${id}">+</button></div></div>`; el.appendChild(d); });
+      document.getElementById('cartPageTotal').textContent = formatMoneyINR(total);
+    }
+
+    function renderProfile(){ document.getElementById('pfName').value = state.user?.name || ''; document.getElementById('pfPhone').value = state.user?.phone || ''; document.getElementById('pfEmail').value = state.user?.email || ''; updateOrderHistory(); }
+
+    /**********************
+     * Routing helper & init
+     **********************/
+    function showPage(name){
+      pages.forEach(p=>p.style.display='none');
+      const el = document.getElementById('page-'+name); if(el) el.style.display='block';
+      document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('nav-active'));
+      const active = [...document.querySelectorAll('.nav-btn')].find(b=>b.dataset.route===name);
+      if(active) active.classList.add('nav-active');
+      state.route = name; save();
+    }
+
+    function init(){
+      load();
+      renderHomePopular(); renderHomeCategories(); renderCategoriesList(); renderMenu(); renderSideCart();
+      // initialize checkout fields behaviour
+      if(checkoutType && deliveryFields){ checkoutType.addEventListener('change', ()=>{ deliveryFields.style.display = (checkoutType.value === 'pickup') ? 'none' : 'block'; }); deliveryFields.style.display = (checkoutType.value === 'pickup') ? 'none' : 'block'; }
+      if(coPayment && paymentFields){ coPayment.addEventListener('change', ()=>{ paymentFields.style.display = (coPayment.value === 'cod') ? 'none' : 'block'; }); paymentFields.style.display = (coPayment?.value === 'cod') ? 'none' : 'block'; }
+      if(state.route) showPage(state.route); else showPage('home');
+      renderAdminMenu(); renderOrdersAdminAndTracking(); renderDeliveryBoys(); renderReports();
+    }
+    init();
+
+    // UX: close modals on backdrop click
+    document.querySelectorAll('.modal').forEach(m => m.addEventListener('click', e => { if(e.target === m) m.style.display = 'none'; }));
+
+    // currency change: re-render amounts
+    document.getElementById('currencySelect').addEventListener('change', ()=>{ renderMenu(); renderHomePopular(); renderSideCart(); renderCartPage(); renderOrdersAdminAndTracking(); });
+
+    // hero CTA
+    document.getElementById('heroOrderNow').addEventListener('click', ()=>{ showPage('menu'); renderMenu(); renderCategoriesList(); window.scrollTo({top:0,behavior:'smooth'}); });
+    document.getElementById('heroOffers').addEventListener('click', ()=>{ alert('Offers: Flat 20% off on orders above ₹500 (demo)'); });
+
+    // keyboard: Enter on search triggers
+    document.getElementById('searchInput').addEventListener('keydown', (e)=>{ if(e.key === 'Enter') renderMenu(); });
+  </script>
 </body>
 </html>
-
