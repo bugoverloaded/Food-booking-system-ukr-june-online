@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>FoodExpress — Modern Food Delivery (Single-file SPA)</title>
-  <meta name="description" content="FoodExpress — Single-file SPA. Landing home, Menu, Item details, Cart, Auth, Checkout, Order tracking, Profile, Admin dashboard." />
+  <title>FoodExpress — Food Delivery</title>
+  <meta name="description" content="FoodExpress.Landing home, Menu, Item details, Cart, Auth, Checkout, Order tracking, Profile, Admin dashboard." />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
     :root{
@@ -106,7 +106,7 @@
         <div class="logo">FE</div>
         <div>
           <h1>FoodExpress</h1>
-          <div class="small">Local flavors · Global menu</div>
+          <div class="small">Local flavors</div>
         </div>
       </div>
 
@@ -186,7 +186,7 @@
           <div style="margin-top:18px;display:flex;justify-content:space-between;align-items:center">
             <div class="small-muted">Discover new tastes and support local kitchens</div>
             <div>
-              <a href="#" class="small-muted" id="homeAbout">About Us</a> ·
+              <a href="#" class="small-muted" id="homeAbout">About Us</a>
               <a href="#" class="small-muted" id="homeContact">Contact</a>
             </div>
           </div>
@@ -216,6 +216,7 @@
         <div id="page-item" class="card page" style="display:none"></div>
 
         <!-- CART -->
+
         <div id="page-cart" class="card page" style="display:none">
           <h3>Your Cart 🛒</h3>
           <div class="card">
@@ -374,15 +375,12 @@
           <div style="margin-top:10px"><button id="viewCartBtn" class="btn">View Cart</button></div>
         </div>
 
-        <div class="card" style="margin-top:12px">
-          <h4>Quick Order</h4>
-          <div class="small-muted">Fast pickup option</div>
-          <div style="margin-top:8px"><button id="quickPickup2" class="btn ghost">Pickup Now</button></div>
-        </div>
+        
+          </div>
       </aside>
     </main>
 
-    <footer>© <span id="year"></span> FoodExpress — Demo single-file SPA · About · Contact · Privacy</footer>
+    <footer>© <span id="year"></span> FoodExpress — Demo website</footer>
   </div>
 
   <!-- MODALS -->
@@ -488,13 +486,13 @@
       const cats = Array.from(new Set(menu.map(m=>m.cuisine)));
       homeCategories.innerHTML = '';
       const sampleImgs = {
-        'Indian':'https://images.unsplash.com/photo-1604908177582-7dd9a3d28f9b?auto=format&fit=crop&w=600&q=60',
-        'Italian':'https://images.unsplash.com/photo-1525755662778-989d0524087e?auto=format&fit=crop&w=600&q=60',
+        'Indian':'https://masalaandchai.com/wp-content/uploads/2022/03/Butter-Chicken.jpg',
+        'Italian':'https://cookieandkate.com/images/2021/07/classic-margherita-pizza.jpg',
         'Japanese':'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=60',
-        'Fusion':'https://images.unsplash.com/photo-1523986371872-9d3ba2e2f642?auto=format&fit=crop&w=600&q=60',
-        'Spanish':'https://images.unsplash.com/photo-1549237515-2e4d0b4b7a62?auto=format&fit=crop&w=600&q=60',
+        'Fusion':'https://cdn.loveandlemons.com/wp-content/uploads/opengraph/2020/06/IMG_25462.jpg',
+        'Spanish':'https://natashaskitchen.com/wp-content/uploads/2020/03/Churros-Recipe-5.jpg',
         'Dessert':'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=60',
-        'Beverage':'https://images.unsplash.com/photo-1568051243857-c1b6b2b0d1ab?auto=format&fit=crop&w=600&q=60'
+        'Beverage':'https://i0.wp.com/mocktailsandmore.com/wp-content/uploads/2022/03/classic-mango-lassi-sq.jpg?w=1200&ssl=1'
       };
       cats.forEach(c=>{
         const div = document.createElement('div'); div.className='category-card';
